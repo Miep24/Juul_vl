@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ily Juul</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #ffe6f0;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 40px;
+        }
+
+        .page {
+            display: none;
+            height: calc(100vh - 80px);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        img {
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 14px 28px;
+            font-size: 18px;
+            margin: 12px;
+        }
+
+
+        .yes {
+            background: #ff4d6d;
+            color: white;
+        }
+
+        .no {
+            background: #444;
+            color: white;
+        }
+
+        /* BACK BUTTON */
+        #backBtn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 8px 14px;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        .heart {
+            position: fixed;
+            color: red;
+            font-size: 20px;
+            animation: float 4s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-800px); opacity: 0; }
+        }
+
+        /* CONFETTI */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: fall 3s linear forwards;
+            z-index: 999;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* POPUP */
+        #popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        #popupContent {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .main-img {
+            width: 90%;
+            max-width: 500px;
+            height: auto;
+}
+@media (max-width: 600px) {
+    #backBtn {
+        top: 10px;
+        left: 10px;
+        font-size: 13px;
+    }
+
+    h1 {
+        font-size: 22px;
+        margin-top: 20px;
+    }
+}
+
+.page {
+    padding: 20px;
+    box-sizing: border-box;
+}
+    </style>
+</head>
+
+<body>
+
+<h1>Hi Juul 💖</h1>
+
+<!-- FRONT PAGE -->
+<div id="frontPage" class="page active">
+    <h2>Ik weet dat ik aan de late kant ben, maar ik wil je iets vragen :</h2>
+    <img src="gecko.jpg" class="main-img">
+    <button class="yes" onclick="goToQuestion()">Verder 💕</button>
+</div>
+
+<!-- QUESTION PAGE -->
+<div id="questionPage" class="page">
+    <button id="backBtn" class="no" onclick="goBack()">← Back</button>
+
+    <img src="cat_praying.jpg" class="main-img">
+    <p>Wil je mijn valentijn zijn?</p>
+
+    <div>
+        <button id="yesBtn" class="yes" onclick="celebrate()">Ja ❤️</button>
+        <button id="noBtn" class="no" onclick="shrinkNo()">Nee 😢</button>
+    </div>
+</div>
+
+<!-- POPUP -->
+<div id="popup">
+    <div id="popupContent">
+        <h2>Yay!! 💖🎉</h2>
+        <p> 🥰</p>
+        <button class="yes" onclick="closePopup()">Yee💕</button>
+    </div>
+</div>
+
+<script>
+let noClicks = 0;
+let yesScale = 1;
+let noScale = 1;
+
+function goToQuestion() {
+    document.getElementById("frontPage").classList.remove("active");
+    document.getElementById("questionPage").classList.add("active");
+}
+
+function shrinkNo() {
+    noClicks++;
+    yesScale += 0.3;
+    noScale -= 0.2;
+
+    document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
+    document.getElementById("noBtn").style.transform = `scale(${noScale})`;
+
+    if (noClicks >= 3) {
+        document.getElementById("noBtn").style.display = "none";
+    }
+}
+
+function goBack() {
+    document.getElementById("questionPage").classList.remove("active");
+    document.getElementById("frontPage").classList.add("active");
+
+    noClicks = 0;
+    yesScale = 1;
+    noScale = 1;
+
+    document.getElementById("yesBtn").style.transform = "scale(1)";
+    document.getElementById("noBtn").style.transform = "scale(1)";
+    document.getElementById("noBtn").style.display = "inline-block";
+}
+
+function celebrate() {
+    // confetti
+    for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+
+        confetti.style.left = Math.random() * window.innerWidth + "px";
+        confetti.style.backgroundColor =
+            ["#ff4d6d", "#ff99ac", "#ffd1dc", "#ffffff"][Math.floor(Math.random() * 4)];
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + "s";
+
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+    }
+
+    // show popup
+    document.getElementById("popup").style.display = "flex";
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+
+
+// floating hearts
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "❤️";
+
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.bottom = "0px";
+
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 4000);
+}
+
+setInterval(createHeart, 300);
+</script>
+
+</body>
+</html>
